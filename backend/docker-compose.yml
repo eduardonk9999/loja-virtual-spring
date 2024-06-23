@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  app:
+    image: openjdk:17-jdk-slim
+    container_name: spring-boot-container
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/usr/src/app
+    working_dir: /usr/src/app
+    command: ["./mvnw", "spring-boot:run"]
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/task_manager
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    container_name: postgres-container
+    environment:
+      POSTGRES_DB: task_manager
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
